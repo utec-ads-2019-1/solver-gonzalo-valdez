@@ -2,7 +2,6 @@
 
 void Tester::execute() {
     string equations[] = {
-            "4-5-4",
         "7/4*((3+1)*3)+3",
         "7/4*((2+-+--8)*2)+3",
         "2+(3)",
@@ -30,15 +29,13 @@ void Tester::execute() {
 
     const unsigned int size = sizeof(equations) / sizeof(string);
     for (int i = 0; i < size; ++i) {
-        if(i>0) return;
+       // if(i>0) return;
         solver* s = new solver(equations[i]);
 
         node* root = s->build(s->equation);
-        cout<<endl;
-        cout<<root->operate()<<endl;
-        cout<<endl;
+        cout<<s->equation<<" = "<<root->operate()<<endl;
         /*
-        float respuesta = s->getroot()->operate();
+        float respuesta = s->root->operate();
         ASSERT(respuesta == results[i], "The solver is not working");
         cout << "Equation(" << i + 1 << ") solved" << endl;*/
     }

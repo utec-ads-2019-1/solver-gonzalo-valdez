@@ -2,6 +2,8 @@
 #define SOLVER_SOLVER_H
 #include <string>
 #include "nodes/node.h"
+#include <map>
+#include <stack>
 using namespace std;
 
 class solver {
@@ -11,7 +13,7 @@ private:
 public:
     solver(string equ) {
         char old;
-        // solve +++--+-+-
+        //////////////////// solve +++--+-+-
         string finaleq;
         for (int i=0;i<equ.size();i++){
             char s = equ[i];
@@ -24,7 +26,7 @@ public:
                 old=s;
             }
         }
-         erase parenthesis
+         //////////////////////////erase parenthesis//////////////////////////////////
         string finaleq2;
         for (int i=0;i<finaleq.size();i++){
             char s = finaleq[i];
@@ -56,7 +58,6 @@ public:
 
     char findop(string eq, int &it){
         char s;
-
         for (auto i = eq.size(); --i;) {
             if(eq.find("+")==string::npos and eq.find("-")==string::npos) break;
             s = eq[i];
