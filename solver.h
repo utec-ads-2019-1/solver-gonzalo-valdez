@@ -1,28 +1,38 @@
 #ifndef SOLVER_SOLVER_H
 #define SOLVER_SOLVER_H
 #include <string>
-#include "nodes/number.h"
-#include "nodes/opera.h"
+#include "nodes/node.h"
 using namespace std;
 
 class solver {
 private:
-    string eq;
+    node* root=nullptr;
+    string equation;
 public:
-    solver(string equ) : eq(equ) {
-        char old=NULL;
+    solver(string equ) {
+        char old;
         // solve +++--+-+-
         string finaleq;
-        for (int i=0;i<eq.size();i++){
-            char s = eq[i];
+        for (int i=0;i<equ.size();i++){
+            char s = equ[i];
             finaleq.push_back(s);
-            if(isoperator(s) && isoperator(old)){
+            if(isoperator(s) and isoperator(old)){
                 finaleq.pop_back();finaleq.pop_back();
                 finaleq.push_back(solveoperators(s,old));
+                old=solveoperators(s,old);
+            } else {
+                old=s;
             }
-            old=s;
         }
-        eq = finaleq;
+         erase parenthesis
+        string finaleq2;
+        for (int i=0;i<finaleq.size();i++){
+            char s = finaleq[i];
+            if(s!='(' and s!=')'){
+                finaleq2.push_back(s);
+            }
+        }
+        equation = finaleq2;
     };
 
     bool isoperator(char s){
@@ -31,49 +41,69 @@ public:
     char solveoperators(char op1, char op2){
         if(op1=='+' and op2=='-'){
             return '-';
-        }
-        if(op2=='+' and op1=='-'){
+        } else if(op1=='-' and op2=='+'){
             return '-';
-        }
-
+        } else if(op1=='-' and op2=='-'){
+            return '+';
+        } else
+            return '+';
     }
     node* createnode(char s){
         string v;
         v.push_back(s);
-        if(isoperator(s)){
-            return new opera(v);
+        return new node(v);
+    }
+
+    char findop(string eq, int &it){
+        char s;
+
+        for (auto i = eq.size(); --i;) {
+            if(eq.find("+")==string::npos and eq.find("-")==string::npos) break;
+            s = eq[i];
+            if (s == '+' or s == '-') {
+                it=i;
+                return s;
+            }
+        }
+        for(auto i=eq.size();--i;) {
+            if(!eq.find('/')==string::npos and !eq.find('*')==string::npos) break;
+            s = eq[i];
+            if(s=='*' or s=='/') {
+                it=i;
+                return s;
+            }
+        }
+        for(auto i=eq.size();--i;) {
+            if(!eq.find('^')==string::npos) break;
+            s = eq[i];
+            if(s=='^') {
+                it=i;
+                return s;
+            }
+        }
+        return 'n';
+    }
+    node* build(string eq) {
+        string s1, s2;
+        int it=0;
+        bool found = false;
+        char s;
+        s = findop(eq,it);
+
+        if (s!='n'){
+            s1 = eq.substr(0, it);
+            s2 = eq.substr(it + 1);
+            node *node = createnode(s);
+            node->left = build(s1);
+            node->right = build(s2);
+            return node;
+
         } else {
-            return new number(v);
+            return new node(eq);
         }
     }
-    node* buildtrio(char s, string s1, string s2){
-        auto node = createnode(s);
-        auto n1 = build(s1);
-        auto n2 = build(s2);
-        node->left = n1;
-        node->right = n2;
-        return node;
-    }
-    node* build(string eq = this->eq){
-        bool inparentesis=false;
-        for(int i=0;i<eq.size();i++){
-            string s1,s2;
-            char s=eq[i];
-            if(s=='('){
-                inparentesis=true;
-            }
-            if(s==')'){
-                inparentesis=false;
-            }
-            if(!inparentesis){
-                if(s=='+' || s=='-'){
-                    s1=eq.substr(0,eq.find(s));
-                    s2=eq.substr(eq.find(s)+1);
-                    return buildtrio(s,s1,s2);
-                }
-            }
-        }
-    }
+
+    friend class Tester;
 };
 
 #endif //SOLVER_SOLVER_H

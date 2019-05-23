@@ -5,7 +5,7 @@
 #include <iostream>
 #include <assert.h>
 #include <string.h>
-
+#include "../solver.h"
 #include "../operations/operation.h"
 
 using namespace std;
